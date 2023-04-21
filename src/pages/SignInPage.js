@@ -3,6 +3,27 @@ import { Link } from "react-router-dom"
 import MyWalletLogo from "../components/MyWalletLogo"
 
 export default function SignInPage() {
+
+
+  function handleSubmit(event) {
+    event.preventDefault()
+
+    setDisabledInput(true)
+
+    axios.post(`${BASE_URL}/auth/login`, form)
+      .then(response => {
+        const { id, name, image, token } = response.data
+        console.log({ id, name, image, token })
+        setUser({ id, name, image, token })
+        localStorage.setItem("user", JSON.stringify({ id, name, image, token }))
+        navigate("/hoje")
+      })
+      .catch(error => {
+        alert(error.response.data.message)
+        setDisabledInput(false)
+      })
+  }
+
   return (
     <SingInContainer>
       <form>
@@ -12,7 +33,7 @@ export default function SignInPage() {
         <button>Entrar</button>
       </form>
 
-      <Link>
+      <Link to='/cadastre-se'>
         Primeira vez? Cadastre-se!
       </Link>
     </SingInContainer>
