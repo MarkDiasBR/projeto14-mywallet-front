@@ -28,7 +28,7 @@ export default function SignInPage() {
       .then(response => {
         const token = response.data;
         // setUser({ id, name, image, token })
-        localStorage.setItem("token", JSON.stringify({ token }))
+        localStorage.setItem("user", JSON.stringify({ token }));
         navigate("/home")
       })
       .catch(error => {

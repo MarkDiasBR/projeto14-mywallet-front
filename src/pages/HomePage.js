@@ -1,8 +1,45 @@
 import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
+import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import BASE_URL from "../constants/url"
+import axios from 'axios'
 
 export default function HomePage() {
+  const [transacoes, setTransacoes] = useState([])
+
+  const token = JSON.parse(localStorage.getItem("user")).token;
+  console.log("meu token é", token)
+
+  useEffect(() => {
+    const config = { "headers": {"Authorization": `Bearer ${token}`} };
+
+    axios.get(`${BASE_URL}/transactions`, config)
+    .then(response=>{
+        console.log("A")
+        console.log(response.data)
+        setTransacoes(response.data)
+    })
+    .catch(err=>console.log(err.response.data))
+  }, [])
+
+  const somaSaldo = (acc, obj) => {
+    console.log("entry:",obj.type === "in" ? obj.value : (-1)*obj.value)
+    return obj.type === "in" ? acc + obj.value : acc - obj.value
+  }
+
+  const moneify = (num, bool) => {
+
+    const answer = num.toLocaleString('pt-BR', {style: "currency", currency: "BRL"});
+
+    if (!bool) {
+      return answer.replace("R$","");
+    }
+    
+    return answer;
+  }
+
   return (
     <HomeContainer>
       <Header>
@@ -12,6 +49,17 @@ export default function HomePage() {
 
       <TransactionsContainer>
         <ul>
+          {transacoes.map(transacao => (
+            <ListItemContainer key={transacao._id}>
+              <div>
+                <span>{transacao.date}</span>
+                <strong>{transacao.title}</strong>
+              </div>
+              <Value color={transacao.type === "in" ? "positivo" : "negativo"}>
+                {moneify(transacao.value, false)}
+              </Value>
+            </ListItemContainer>
+          ))}
           <ListItemContainer>
             <div>
               <span>30/11</span>
@@ -31,20 +79,26 @@ export default function HomePage() {
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
+          <Value color={"positivo"}>
+            {transacoes.length > 0 && moneify(transacoes.reduce(somaSaldo,0), true)}
+          </Value>
         </article>
       </TransactionsContainer>
 
 
       <ButtonsContainer>
-        <button>
-          <AiOutlinePlusCircle />
-          <p>Nova <br /> entrada</p>
-        </button>
-        <button>
-          <AiOutlineMinusCircle />
-          <p>Nova <br />saída</p>
-        </button>
+        <Link to="/nova-transacao/entrada">
+          <button>
+            <AiOutlinePlusCircle />
+            <p>Nova <br /> entrada</p>
+          </button>
+        </Link>
+        <Link to="/nova-transacao/saida">
+          <button>
+            <AiOutlineMinusCircle />
+            <p>Nova <br />saída</p>
+          </button>
+        </Link>
       </ButtonsContainer>
 
     </HomeContainer>

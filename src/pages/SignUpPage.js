@@ -15,7 +15,7 @@ export default function SignUpPage() {
     const {name, value} = event.target
 
     const passwordConfirm = document.querySelector("#pass2-signin");
-    if (passwordConfirm.value != document.querySelector("#pass1-signin").value) {
+    if (passwordConfirm.value !== document.querySelector("#pass1-signin").value) {
       passwordConfirm.setCustomValidity('Senhas não conferem.');
     } else {
       passwordConfirm.setCustomValidity('');
