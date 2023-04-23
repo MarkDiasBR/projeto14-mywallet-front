@@ -3,18 +3,20 @@ import { useParams, useNavigate } from "react-router-dom"
 import { useState } from "react";
 import { novaTransacao } from "../services/serverRequisitions"
 
-export default function TransactionsPage() {
+export default function EditTransactionPage() {
   const [form, setForm] = useState({title: "", value: ""});
   const navigate = useNavigate();
 
   const token = JSON.parse(localStorage.getItem("user")).token;
 
+  const config = { "headers": {"Authorization": `Bearer ${token}`} }
+
   let params;
 
   if (useParams().tipo === 'entrada') {
-    params = {type: 'in', tipo: 'entrada'};
+    params = {type: 'in'};
   } else {
-    params = {type: 'out', tipo: 'saída'};
+    params = {type: 'out'};
   }    
 
   function handleForm(event) {
@@ -47,11 +49,11 @@ export default function TransactionsPage() {
 
   return (
     <TransactionsContainer>
-      <h1>Nova {params.tipo}</h1>
+      <h1>Editar entrada</h1>
       <form onSubmit={handleSubmit}>
         <input name="value" placeholder="Valor" pattern="^\d+(?:,\d{1,2})?$" onChange={handleForm} required/>
         <input name="title" placeholder="Descrição" type="text" onChange={handleForm} required/>
-        <button>Salvar {params.tipo}</button>
+        <button>Salvar TRANSAÇÃO</button>
       </form>
     </TransactionsContainer>
   )

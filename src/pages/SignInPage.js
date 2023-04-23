@@ -24,11 +24,17 @@ export default function SignInPage() {
 
     setDisabledInput(true);
 
+    
+
     axios.post(`${BASE_URL}/sign-in`, form)
       .then(response => {
-        const token = response.data;
+        const { name, token } = response.data;
+        console.log("oi");
+        console.log(form)
+        console.log("form acima")
         // setUser({ id, name, image, token })
-        localStorage.setItem("user", JSON.stringify({ token }));
+        // console.log('requisition.body',requisition.body)
+        localStorage.setItem("user", JSON.stringify({ name, token }));
         navigate("/home")
       })
       .catch(error => {

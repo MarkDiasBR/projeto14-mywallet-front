@@ -3,29 +3,26 @@ import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
-import BASE_URL from "../constants/url"
-import axios from 'axios'
+import { pegarTransacoes, deleteTransacao } from "../services/serverRequisitions"
 
 export default function HomePage() {
   const [transacoes, setTransacoes] = useState([])
-
-  const token = JSON.parse(localStorage.getItem("user")).token;
-  console.log("meu token é", token)
+  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
-    const config = { "headers": {"Authorization": `Bearer ${token}`} };
+    async function init() {
+      try {
+        const response = await pegarTransacoes();
+        setTransacoes(response);
+      } catch (err) {
+        console.log(err.response.data)
+      }
+    }
 
-    axios.get(`${BASE_URL}/transactions`, config)
-    .then(response=>{
-        console.log("A")
-        console.log(response.data)
-        setTransacoes(response.data)
-    })
-    .catch(err=>console.log(err.response.data))
-  }, [])
+    init();
+  }, []);
 
   const somaSaldo = (acc, obj) => {
-    console.log("entry:",obj.type === "in" ? obj.value : (-1)*obj.value)
     return obj.type === "in" ? acc + obj.value : acc - obj.value
   }
 
@@ -40,10 +37,31 @@ export default function HomePage() {
     return answer;
   }
 
+  function DeleteButton({ id }) {
+
+    async function handleDeleteButton(id) {
+      if (window.confirm("Tem certeza que quer apagar esta entrada?")) {
+        try {
+          await deleteTransacao(id);
+          const response = await pegarTransacoes();
+          setTransacoes(response);
+        } catch (err) {
+          console.log(err.response.data)
+        }
+      }
+    }
+    
+    return (
+      <button onClick={()=>handleDeleteButton(id)}>
+        x
+      </button>
+    )
+  }
+
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
+        <h1>Olá, {user.name}</h1>
         <BiExit />
       </Header>
 
@@ -53,34 +71,30 @@ export default function HomePage() {
             <ListItemContainer key={transacao._id}>
               <div>
                 <span>{transacao.date}</span>
-                <strong>{transacao.title}</strong>
+                <Link to={`/editar-registro/${transacao._id}`}>
+                  <strong>{transacao.title}</strong>
+                </Link>
               </div>
-              <Value color={transacao.type === "in" ? "positivo" : "negativo"}>
-                {moneify(transacao.value, false)}
-              </Value>
+              <div>
+                <Link to={`/editar-registro/${transacao._id}`}>
+                  <Value color={transacao.type === "in" ? "positivo" : "negativo"}>
+                    {`${transacao.type === "out" ? "-" : ""}${moneify(transacao.value, false).trim()}`}
+                  </Value>                
+                </Link>   
+                <DeleteButton id={transacao._id} />
+              </div>
             </ListItemContainer>
           ))}
-          <ListItemContainer>
-            <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
-            </div>
-            <Value color={"negativo"}>120,00</Value>
-          </ListItemContainer>
-
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
         </ul>
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>
-            {transacoes.length > 0 && moneify(transacoes.reduce(somaSaldo,0), true)}
+          <Value color={transacoes.reduce(somaSaldo,0) >= 0
+                        ? "positivo"
+                        : "negativo"}>
+            {transacoes.length > 0 && 
+            moneify(transacoes.reduce(somaSaldo,0), true)
+            }
           </Value>
         </article>
       </TransactionsContainer>
@@ -142,9 +156,15 @@ const ButtonsContainer = styled.section`
   margin-bottom: 0;
   display: flex;
   gap: 15px;
+
+  & > a {
+    padding-top: 0px;
+    width: 100%;
+  };
   
   button {
-    width: 50%;
+    /* width: calc(50vw - 32px); */
+    width: 100%;
     height: 115px;
     font-size: 22px;
     text-align: left;
@@ -171,5 +191,23 @@ const ListItemContainer = styled.li`
   div span {
     color: #c6c6c6;
     margin-right: 10px;
+  }
+  div:last-child {
+    display: flex;
+    align-items: center;
+
+  }
+  button {
+    padding: 0;
+    position: relative;
+    left: 10px;
+    bottom: 2px;
+    color: #C6c6c6;
+    background-color: transparent;
+  }
+  & > div > a {
+    font: inherit;
+    color: #000000;
+    padding: 0;
   }
 `
