@@ -28,16 +28,16 @@ export async function deleteTransacao(id) {
         console.log("pronto deletado")
         await pegarTransacoes();
         console.log("pronto atualizado")
-        return
+        // return
     } catch (err) {
         console.log(err.response.data)
     }
 }
 
-export async function editarTransacao() {
+export async function editarTransacao(id, form) {
     try {
-
+        await axios.put(`${BASE_URL}/transaction/${id}`, form, config)
     } catch (err) {
-
+        console.log(err.response.data)
     }
 }

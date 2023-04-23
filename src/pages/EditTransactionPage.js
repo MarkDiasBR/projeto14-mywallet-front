@@ -1,23 +1,20 @@
 import styled from "styled-components"
 import { useParams, useNavigate } from "react-router-dom"
 import { useState } from "react";
-import { novaTransacao } from "../services/serverRequisitions"
+import { editarTransacao } from "../services/serverRequisitions"
 
 export default function EditTransactionPage() {
   const [form, setForm] = useState({title: "", value: ""});
   const navigate = useNavigate();
+//   const token = JSON.parse(localStorage.getItem("user")).token;
+//   const config = { "headers": {"Authorization": `Bearer ${token}`} }
+  const params = { ...useParams(), type: useParams().tipo };
 
-  const token = JSON.parse(localStorage.getItem("user")).token;
-
-  const config = { "headers": {"Authorization": `Bearer ${token}`} }
-
-  let params;
-
-  if (useParams().tipo === 'entrada') {
-    params = {type: 'in'};
+  if (params.tipo === 'in') {
+    params.tipo = 'entrada'
   } else {
-    params = {type: 'out'};
-  }    
+    params.tipo = 'saída'
+  }
 
   function handleForm(event) {
     const {name, value} = event.target;
@@ -32,15 +29,15 @@ export default function EditTransactionPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    const data = new Date();
-    const dataTrim = data.toLocaleDateString("pt-BR").split("/");
-    const dataTransacao = dataTrim[0].concat("/",dataTrim[1]);
+    // const data = new Date();
+    // const dataTrim = data.toLocaleDateString("pt-BR").split("/");
+    // const dataTransacao = dataTrim[0].concat("/",dataTrim[1]);
     
-    let modifiedForm = {...form, date: dataTransacao, value: +(form.value.replaceAll(",","."))};
-    console.log('modifiedForm',modifiedForm)
+    // let modifiedForm = {...form, date: dataTransacao, value: +(form.value.replaceAll(",","."))};
+    // console.log('modifiedForm',modifiedForm)
 
     try {
-      await novaTransacao(params, modifiedForm);
+      await editarTransacao(params.id, form);
       navigate("/home");
     } catch (err) {
       console.log(err.response.data)
@@ -49,11 +46,11 @@ export default function EditTransactionPage() {
 
   return (
     <TransactionsContainer>
-      <h1>Editar entrada</h1>
+      <h1>Editar {params.tipo}</h1>
       <form onSubmit={handleSubmit}>
         <input name="value" placeholder="Valor" pattern="^\d+(?:,\d{1,2})?$" onChange={handleForm} required/>
         <input name="title" placeholder="Descrição" type="text" onChange={handleForm} required/>
-        <button>Salvar TRANSAÇÃO</button>
+        <button>Salvar {params.tipo}</button>
       </form>
     </TransactionsContainer>
   )
