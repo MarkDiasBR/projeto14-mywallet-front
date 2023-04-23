@@ -122,7 +122,8 @@ export default function HomePage() {
 const HomeContainer = styled.div`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 50px);
+  min-height: 94vh;
+  height: max-content;
 `
 const Header = styled.header`
   display: flex;
@@ -142,14 +143,25 @@ const TransactionsContainer = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  /* background: yellow; */
   article {
     display: flex;
+    /* background: red; */
     justify-content: space-between;   
     strong {
       font-weight: 700;
       text-transform: uppercase;
     }
   }
+  ul {
+    height: calc(100vh - 290px);
+    overflow-y: scroll;
+    width: calc(100%);
+    padding-right: 16px;
+    /* background: blue; */
+  }
+  
 `
 const ButtonsContainer = styled.section`
   margin-top: 15px;
