@@ -7,8 +7,6 @@ export default function TransactionsPage() {
   const [form, setForm] = useState({title: "", value: ""});
   const navigate = useNavigate();
 
-  const token = JSON.parse(localStorage.getItem("user")).token;
-
   let params;
 
   if (useParams().tipo === 'entrada') {

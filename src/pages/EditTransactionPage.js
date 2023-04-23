@@ -6,8 +6,7 @@ import { editarTransacao } from "../services/serverRequisitions"
 export default function EditTransactionPage() {
   const [form, setForm] = useState({title: "", value: ""});
   const navigate = useNavigate();
-//   const token = JSON.parse(localStorage.getItem("user")).token;
-//   const config = { "headers": {"Authorization": `Bearer ${token}`} }
+
   const params = { ...useParams(), type: useParams().tipo };
 
   if (params.tipo === 'in') {
@@ -29,15 +28,11 @@ export default function EditTransactionPage() {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    // const data = new Date();
-    // const dataTrim = data.toLocaleDateString("pt-BR").split("/");
-    // const dataTransacao = dataTrim[0].concat("/",dataTrim[1]);
-    
-    // let modifiedForm = {...form, date: dataTransacao, value: +(form.value.replaceAll(",","."))};
-    // console.log('modifiedForm',modifiedForm)
+    let modifiedForm = {...form, value: +(form.value.replaceAll(",","."))};
+    console.log('modifiedForm',modifiedForm)
 
     try {
-      await editarTransacao(params.id, form);
+      await editarTransacao(params.id, modifiedForm);
       navigate("/home");
     } catch (err) {
       console.log(err.response.data)

@@ -28,7 +28,6 @@ export async function deleteTransacao(id) {
         console.log("pronto deletado")
         await pegarTransacoes();
         console.log("pronto atualizado")
-        // return
     } catch (err) {
         console.log(err.response.data)
     }
