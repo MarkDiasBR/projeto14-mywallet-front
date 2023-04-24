@@ -2,8 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import MyWalletLogo from "../components/MyWalletLogo"
-import BASE_URL from "../constants/url";
-import axios from 'axios';
+import { signUp } from "../services/serverRequisitions";
 
 export default function SignUpPage() {
   const [form, setForm] = useState({email: "", name: "", password: "" });
@@ -26,20 +25,18 @@ export default function SignUpPage() {
     console.log(form)
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
 
     setDisabledInput(true)
 
-    axios.post(`${BASE_URL}/sign-up`, form)
-      .then(response => {
-        console.log(response.data)
-        navigate("/") 
-      })
-      .catch(error=> {
-        console.log(error.response.data)
-        setDisabledInput(false)
-      })
+    try {
+      await signUp(form)
+      navigate("/") 
+    } catch (err) {
+      console.log(err.response.data)
+      setDisabledInput(false)
+    }
   }
 
   return (

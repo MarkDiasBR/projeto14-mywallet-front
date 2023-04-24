@@ -19,29 +19,37 @@ export default function SignInPage() {
     console.log(form)
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     setDisabledInput(true);
-
+  
+    try {
+      const { name, token } = await signIn(form)
+      localStorage.setItem("user", JSON.stringify({ name, token }));
+      navigate("/home")
+    } catch (err) {
+      console.log(err.response.data)
+      setDisabledInput(false)
+    }
     
 
-    axios.post(`${BASE_URL}/sign-in`, form)
-      .then(response => {
-        const { name, token } = response.data;
-        console.log("oi");
-        console.log(form)
-        console.log("form acima")
-        // setUser({ id, name, image, token })
-        // console.log('requisition.body',requisition.body)
-        localStorage.setItem("user", JSON.stringify({ name, token }));
-        navigate("/home")
-      })
-      .catch(error => {
-        console.log(error.response.data)
-        alert(error.response.data)
-        setDisabledInput(false)
-      })
+    // axios.post(`${BASE_URL}/sign-in`, form)
+    //   .then(response => {
+    //     const { name, token } = response.data;
+    //     console.log("oi");
+    //     console.log(form)
+    //     console.log("form acima")
+    //     // setUser({ id, name, image, token })
+    //     // console.log('requisition.body',requisition.body)
+    //     localStorage.setItem("user", JSON.stringify({ name, token }));
+    //     navigate("/home")
+    //   })
+    //   .catch(error => {
+    //     console.log(error.response.data)
+    //     alert(error.response.data)
+    //     setDisabledInput(false)
+    //   })
   }
 
   return (

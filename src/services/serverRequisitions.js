@@ -8,10 +8,26 @@ if (user) {
     config = { "headers": {"Authorization": `Bearer ${user.token}`} };
 }
 
+export async function signUp(form) {
+    try {
+        await axios.post(`${process.env.REACT_APP_API_URL}/sign-in`, form)
+    } catch (err) {
+        console.log(err.response.data)
+    }
+}
+
+export async function signIn(form) {
+    try {
+        const promise = await axios.post(`${process.env.REACT_APP_API_URL}/sign-in`, form)
+        return promise.data;
+    } catch (err) {
+        console.log(err.response.data)
+    }
+}
+
 export async function pegarTransacoes() {
     try {
       const promise = await axios.get(`${process.env.REACT_APP_API_URL}/transactions`, config);
-      console.log("atualizando papa")
       return promise.data
     } catch (err) {
       console.log(err.response.data)
