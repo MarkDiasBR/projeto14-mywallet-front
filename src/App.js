@@ -5,6 +5,7 @@ import SignInPage from "./pages/SignInPage"
 import SignUpPage from "./pages/SignUpPage"
 import TransactionsPage from "./pages/TransactionPage"
 import EditTransactionPage from "./pages/EditTransactionPage"
+import ErroPage from "./pages/ErroPage"
 
 export default function App() {
   return (
@@ -16,6 +17,7 @@ export default function App() {
           <Route path="/home" element={<HomePage />} />
           <Route path="/nova-transacao/:tipo" element={<TransactionsPage />} />
           <Route path="/editar-registro/:tipo/:id" element={<EditTransactionPage />} />
+          <Route path="*" element={<ErroPage />} />
         </Routes>
       </BrowserRouter>
     </PagesContainer>

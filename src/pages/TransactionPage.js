@@ -1,12 +1,13 @@
 import styled from "styled-components"
 import { useParams, useNavigate } from "react-router-dom"
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { novaTransacao } from "../services/serverRequisitions"
 
 export default function TransactionsPage() {
   const [form, setForm] = useState({title: "", value: ""});
   const navigate = useNavigate();
-
+  const user = JSON.parse(localStorage.getItem("user"));
+  
   let params;
 
   if (useParams().tipo === 'entrada') {
@@ -14,6 +15,18 @@ export default function TransactionsPage() {
   } else {
     params = {type: 'out', tipo: 'saída'};
   }    
+
+  const bounceOut = (!user)
+  useEffect(() => {
+
+    if (bounceOut) {
+      navigate("/", {state: {
+        errorTitle: "⚠️ ACESSO NÃO PERMITIDO",
+        errorMessage: "Faça o login!",
+        errorColor: "#F7330E"}})
+      return;
+    }
+  }, []);
 
   function handleForm(event) {
     const {name, value} = event.target;

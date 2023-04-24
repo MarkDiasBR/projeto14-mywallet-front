@@ -10,9 +10,17 @@ export default function HomePage() {
   const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
 
+  const bounceOut = (!user)
   
-
   useEffect(() => {
+
+    if (bounceOut) {
+      navigate("/", {state: {
+        errorTitle: "⚠️ ACESSO NÃO PERMITIDO",
+        errorMessage: "Faça o login!",
+        errorColor: "#F7330E"}})
+      return;
+    }
 
     async function init() {
       try {
@@ -67,19 +75,22 @@ export default function HomePage() {
 
   function handleLogout() {
     localStorage.clear();
-    navigate("/");
+    navigate("/", {state: {
+      errorTitle: "LOGOUT EFETUADO",
+      errorMessage: "Até logo! 😉",
+      errorColor: "#6c3973"}})
   }
 
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, {user.name}</h1>
+        <h1>Olá, {user !== null ? user.name : ''}</h1>
         <BiExit onClick={handleLogout}/>
       </Header>
 
       <TransactionsContainer>
         <ul id="transactions-container">
-          {transacoes.map(transacao => (
+          {transacoes ? transacoes.map(transacao => (
             <ListItemContainer key={transacao._id}>
               <div>
                 <span>{transacao.date}</span>
@@ -96,16 +107,16 @@ export default function HomePage() {
                 <DeleteButton id={transacao._id} />
               </div>
             </ListItemContainer>
-          ))}
+          )) : ''}
         </ul>
 
         <article>
           <strong>Saldo</strong>
-          <Value color={transacoes.reduce(somaSaldo,0) >= 0
+          <Value color={transacoes ? (transacoes.reduce(somaSaldo,0) >= 0
                         ? "positivo"
-                        : "negativo"}>
-            {transacoes.length > 0 && 
-            moneify(transacoes.reduce(somaSaldo,0), true)
+                        : "negativo") : ''}>
+            {transacoes ? (transacoes.length > 0 && 
+            moneify(transacoes.reduce(somaSaldo,0), true)) : ''
             }
           </Value>
         </article>
