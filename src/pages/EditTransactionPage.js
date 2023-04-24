@@ -1,9 +1,11 @@
 import styled from "styled-components"
-import { useParams, useNavigate } from "react-router-dom"
+import { useParams, useNavigate, useLocation } from "react-router-dom"
 import { useState } from "react";
 import { editarTransacao } from "../services/serverRequisitions"
 
 export default function EditTransactionPage() {
+  const { value, title } = useLocation().state
+
   const [form, setForm] = useState({title: "", value: ""});
   const navigate = useNavigate();
 
@@ -43,8 +45,8 @@ export default function EditTransactionPage() {
     <TransactionsContainer>
       <h1>Editar {params.tipo}</h1>
       <form onSubmit={handleSubmit}>
-        <input name="value" placeholder="Valor" pattern="^\d+(?:,\d{1,2})?$" onChange={handleForm} required/>
-        <input name="title" placeholder="Descrição" type="text" onChange={handleForm} required/>
+        <input name="value" placeholder={value} pattern="^\d+(?:,\d{1,2})?$" onChange={handleForm} required/>
+        <input name="title" placeholder={title} type="text" onChange={handleForm} required/>
         <button>Salvar {params.tipo}</button>
       </form>
     </TransactionsContainer>

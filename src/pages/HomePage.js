@@ -83,12 +83,12 @@ export default function HomePage() {
             <ListItemContainer key={transacao._id}>
               <div>
                 <span>{transacao.date}</span>
-                <Link to={`/editar-registro/${transacao.type}/${transacao._id}`}>
+                <Link to={`/editar-registro/${transacao.type}/${transacao._id}`} state={{value:transacao.value, title:transacao.title}}>
                   <strong>{transacao.title}</strong>
                 </Link>
               </div>
               <div>
-                <Link to={`/editar-registro/${transacao.type}/${transacao._id}`}>
+                <Link to={`/editar-registro/${transacao.type}/${transacao._id}`} state={{value:transacao.value, title:transacao.title}}>
                   <Value color={transacao.type === "in" ? "positivo" : "negativo"}>
                     {`${transacao.type === "out" ? "-" : ""}${moneify(transacao.value, false).trim()}`}
                   </Value>                
