@@ -2,20 +2,27 @@ import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { pegarTransacoes, deleteTransacao } from "../services/serverRequisitions"
 
 export default function HomePage() {
   const [transacoes, setTransacoes] = useState([])
   const user = JSON.parse(localStorage.getItem("user"));
+  const navigate = useNavigate();
+
+  
 
   useEffect(() => {
+
     async function init() {
       try {
         const response = await pegarTransacoes();
         setTransacoes(response);
+        if (document.querySelector('#transactions-container > li:last-child') !== null) {
+          document.querySelector('#transactions-container > li:last-child').scrollIntoView({ behavior: 'smooth' })
+        }
       } catch (err) {
-        console.log(err.response.data)
+        console.log(err)
       }
     }
 
@@ -58,15 +65,20 @@ export default function HomePage() {
     )
   }
 
+  function handleLogout() {
+    localStorage.clear();
+    navigate("/");
+  }
+
   return (
     <HomeContainer>
       <Header>
         <h1>Olá, {user.name}</h1>
-        <BiExit />
+        <BiExit onClick={handleLogout}/>
       </Header>
 
       <TransactionsContainer>
-        <ul>
+        <ul id="transactions-container">
           {transacoes.map(transacao => (
             <ListItemContainer key={transacao._id}>
               <div>
@@ -191,7 +203,7 @@ const ButtonsContainer = styled.section`
 const Value = styled.div`
   font-size: 16px;
   text-align: right;
-  color: ${(props) => (props.color === "positivo" ? "green" : "red")};
+  color: ${(props) => (props.color === "positivo" ? "green" : "#F7330E")};
 `
 const ListItemContainer = styled.li`
   display: flex;
